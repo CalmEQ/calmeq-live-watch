@@ -1,0 +1,26 @@
+{
+  "name": "calmeq-live-watch",
+  "version": "0.0.1",
+  "description": "a simple example to show the live running of the server",
+  "main": "server.js",
+  "dependencies": {
+    "async": "^0.2.10",
+    "express": "^3.2.6",
+    "socket.io": "^0.9.17"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/CalmEQ/calmeq-live-watch.git"
+  },
+  "author": "Jay Dermody",
+  "license": "none",
+  "bugs": {
+    "url": "https://github.com/CalmEQ/calmeq-live-watch/issues"
+  },
+  "homepage": "https://github.com/CalmEQ/calmeq-live-watch"
+}
