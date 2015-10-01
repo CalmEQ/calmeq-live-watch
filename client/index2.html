@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en" ng-app>
+  <head>
+    <title>Chat Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-responsive.min.css">
+    <style>
+      body {
+        padding-top: 60px;
+      }
+    </style>
+    <script>
+      function DeviceMonitor($scope) {
+        var socket = io.connect();
+
+        $scope.messages = [];
+        $scope.roster = [];
+        $scope.name = '';
+        $scope.text = '';
+        $scope.signals = [];
+
+        socket.on('connect', function () {
+          $scope.setName();
+        });
+
+        socket.on('signals', function(livesignals) {
+            $scope.sigals = livesignals;
+            $scope.$apply()
+        })
+
+        socket.on('setName', function(newname) {
+          $scope.currnames.push(newname);
+          $scope.apply
+        })
+      
+        socket.on('message', function (msg) {
+          $scope.messages.push(msg);
+          $scope.$apply();
+        });
+
+        socket.on('roster', function (names) {
+          $scope.roster = names;
+          $scope.$apply();
+        });
+
+        $scope.send = function send() {
+          console.log('Sending message:', $scope.text);
+          socket.emit('message', $scope.text);
+          $scope.text = '';
+        };
+
+        $scope.setName = function setName() {
+          socket.emit('identify', $scope.name);
+        };
+      }
+    </script>
+  <body>
+    <div class="container" ng-controller="DeviceMonitor">
+      <div class="row">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th class="span2">Connected Devices</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="sname in names">
+                <td ng-bind="sname"></td>
+              </tr>
+            </tbody>
+          </table>
+      </div>
+      <div class="page-header">
+        <h1>Connected Devices</h1>
+      </div>
+      <div class="row">
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th class="span2">Name</th>
+                <th class="span7">Message</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="sig in signals">
+                <td class="span2" ng-bind="sig.name"></td>
+                <td class="span7" ng-bind="sig.text"></td>
+              </tr>
+            </tbody>
+          </table>
+      </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/angular.min.js"></script>
+  </body>

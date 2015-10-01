@@ -1,0 +1,28 @@
+<!doctype html>
+<html ng-app="deviceWatch">
+  <head>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+    <script type="text/javascript" src="/js/angular.min.js"></script>
+    <script type="text/javascript" src="/js/app.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/js/socket.js"></script>
+    <title>Singals from devices</title>
+    <style>
+    </style>
+  </head>
+  <body>
+      <h2>Connected Devices</h2>
+      <div ng-controller="AllDevice">
+        <table>
+          <th>Connected</th><th>Name</th><th>Random</th>
+          <tr ng-repeat="(name, dict) in devices">
+            <td>{{dict.connected}}</td>
+            <td>{{name}}</td>
+            <td>{{dict.random}}</td>
+          </tr>
+        </table>
+        </ul>
+      </div>
+      
+  </body>
+</html>
