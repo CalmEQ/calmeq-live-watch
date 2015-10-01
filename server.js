@@ -23,29 +23,36 @@ app.use( express.static( __dirname + '/client') );
 io.on('connection', function(socket){
   console.log('socket id ' + socket.id + ' is connected.'); 
   var addedDevice = false;
-  console.log ('connection from:');
-  console.log( socket.request );
+
+  // nothing grabs ip address consistently, which isn't too much a concern,
+  // we have trusted devices so we're free to connect
+  //console.log ('connection from:');
+  //console.log( socket.handshake.address );
+  //console.log( socket.request.headers['x-forwarded-for'] )
 
   // used to track new devices being created
   socket.on('add device', function(name) {
     addedDevice = true;
     socket.name = name;
-    livedata[ name ] = { connected: true };
-    io.emit( 'signal', { name: name, key: 'connected', val: true });
-    console.log('device ' + name + ' is set.'); 
+    if (!(socket.name in livedata)) {
+      livedata[socket.name] = {};
+    }
+    livedata[ socket.name ].connected = true;
+    io.emit( 'signal', { name: socket.name, key: 'connected', val: true });
+    console.log('device ' + socket.name + ' is set.'); 
   });
   
   // used to initialize website data as needed
   socket.on('initalize data', function( fn ) {
-    fn(livedata)
-    console.log('initializing webpage')
-  })
+    fn(livedata);
+    console.log('initializing webpage');
+  });
   
   // core push from device to webpages
   socket.on('signal', function(signal) {
     if (!(signal.name in livedata)) {
       livedata[signal.name] = {};
-    };
+    }
     
     livedata[ signal.name ][ signal.key ] = signal.val;
     io.emit( 'signal', signal );

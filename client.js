@@ -3,16 +3,18 @@
 /**
  * Module dependencies.
  */
- 
+
+var os = require('os');
 var program = require('commander');
 var socket_client = require('socket.io-client');
 
+var hostname = os.hostname()
  
 program
   .version('0.0.1')
-  .option('-h, --host [server]', 'Hostname [0.0.0.0]', '0.0.0.0')
+  .option('-h, --host [server]', 'Hostname, (set 0.0.0.0 for local c9.io)' )
   .option('-p, --port [number]', 'Set port [8080]', '8080')
-  .option('-n, --name [string]', 'Set client name')
+  .option('-n, --name [string]', 'Set client name [' + hostname + ']', hostname)
   .parse(process.argv);
  
 var name = program.name;
