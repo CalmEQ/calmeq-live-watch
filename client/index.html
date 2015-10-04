@@ -2,27 +2,42 @@
 <html ng-app="deviceWatch">
   <head>
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
-    <script type="text/javascript" src="/js/angular.min.js"></script>
+    <script type="text/javascript" src="/bower/angular/angular.min.js"></script>
     <script type="text/javascript" src="/js/app.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
-    <script type="text/javascript" src="/js/socket.js"></script>
+    <script type="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type="text/javascript" src="/bower/angular-socket-io/socket.js"></script>
+    <script src='/bower/lodash/lodash.js'></script>
+    <script src='/bower/angular-simple-logger/dist/index.js'></script>
+    <script src='/bower/angular-google-maps/dist/angular-google-maps.js'></script>
     <title>Singals from devices</title>
     <style>
+      .angular-google-map-container { height: 400px; }
     </style>
   </head>
   <body>
       <h2>Connected Devices</h2>
       <div ng-controller="AllDevice">
         <table>
-          <th>Connected</th><th>Name</th><th>Random</th>
-          <tr ng-repeat="(name, dict) in devices">
-            <td>{{dict.connected}}</td>
-            <td>{{name}}</td>
-            <td>{{dict.random}}</td>
+          <th>Connected</th><th>Name</th><th>Latitude</th><th>Longitude</th><th>Altitude</th>
+          <tr ng-repeat="device in devicedata">
+            <td>{{devicedata.connected}}</td>
+            <td>{{device.name}}</td>
+            <td>{{device.latitude}}</td>
+            <td>{{device.longitude}}</td>
+            <td>{{device.altitude}}</td>
           </tr>
         </table>
         </ul>
+        
+        <h2>Map</h2>
+        <ui-gmap-google-map center='map.center' zoom='map.zoom'>
+          <ui-gmap-markers models="devicedata" coords="'self'" fit="true" idkey="'name'">
+          </ui-gmap-markers>
+        </ui-gmap-google-map>
+
       </div>
-      
+
+      <!--script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyADBrHDk2telNSBAdKCOTunANdjzQUbTYQ&callback=initMap"
+        async defer></script-->
   </body>
 </html>

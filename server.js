@@ -11,10 +11,14 @@ server.listen(process.env.PORT || 3000, process.env.IP || "0.0.0.0", function(){
 });
 
 // used to initialize the data for the web pages
-var livedata = {};
+var devicedata = [];
+var devicemap = {};
 
 // setup express to use the 'client' directory
 app.use( express.static( __dirname + '/client') );
+
+// expose bower_components to simplify dev workflow 
+app.use( '/bower', express.static( __dirname +'/bower_components'));
 
 
 // meat of socket.io connection, right now both devices and webpages comingle, 
@@ -30,31 +34,41 @@ io.on('connection', function(socket){
   //console.log( socket.handshake.address );
   //console.log( socket.request.headers['x-forwarded-for'] )
 
+  function getid( name ) {
+    var myid;
+    if (!(name in devicemap)) {
+      myid = devicedata.push( { name: name } ) - 1;
+      devicemap[name] = myid;
+    } else {
+      myid = devicemap[name];
+    }
+    return myid;    
+  };
+
+  // used to initialize website data as needed
+  socket.on('initalize data', function( fn ) {
+    fn( devicedata, devicemap );
+    console.log('initializing webpage');
+  });
+  
+
   // used to track new devices being created
   socket.on('add device', function(name) {
     addedDevice = true;
     socket.name = name;
-    if (!(socket.name in livedata)) {
-      livedata[socket.name] = {};
-    }
-    livedata[ socket.name ].connected = true;
+    var myid = getid( name );
+    console.log('Mapped ' + name + ' to ' + myid)
+    //console.log(devicemap)
+    //console.log(devicedata)
+    devicedata[myid].connected = true;
     io.emit( 'signal', { name: socket.name, key: 'connected', val: true });
     console.log('device ' + socket.name + ' is set.'); 
   });
   
-  // used to initialize website data as needed
-  socket.on('initalize data', function( fn ) {
-    fn(livedata);
-    console.log('initializing webpage');
-  });
-  
   // core push from device to webpages
   socket.on('signal', function(signal) {
-    if (!(signal.name in livedata)) {
-      livedata[signal.name] = {};
-    }
-    
-    livedata[ signal.name ][ signal.key ] = signal.val;
+    var myid = getid( signal.name );
+    devicedata[ myid ][ signal.key ] = signal.val;
     io.emit( 'signal', signal );
     console.log( 'from ' + socket.name + ', ' + signal.key + ': ' + signal.val );
   });
@@ -62,7 +76,8 @@ io.on('connection', function(socket){
   // track the disconnects, and flag devices
   socket.on('disconnect', function() {
     if ( addedDevice ) {
-      livedata[ socket.name ][ 'connected' ] = false;
+      var myid = getid( socket.name );
+      devicedata[ myid ].connected = false;
       io.emit( 'signal', { name: socket.name, key: 'connected', val: false });
       console.log('device ' + socket.name + ' disconnected.'); 
     }

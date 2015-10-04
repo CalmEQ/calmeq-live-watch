@@ -1,0 +1,26 @@
+{
+  "name": "calmeq-live-watch",
+  "version": "0.0.1",
+  "homepage": "https://github.com/CalmEQ/calmeq-live-watch",
+  "authors": [
+    "Jay D <jayfdermody@gmail.com>"
+  ],
+  "description": "website to view current devices and thier status",
+  "main": "client/index.html",
+  "moduleType": [
+    "node"
+  ],
+  "license": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular-google-maps": "~2.2.1",
+    "angular-socket-io": "~0.7.0"
+  }
+}
