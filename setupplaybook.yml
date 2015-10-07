@@ -1,0 +1,91 @@
+---
+- hosts: raspberrypis
+  remote_user: pi
+  sudo: yes
+  tasks:
+    - name: test connection
+      ping:
+
+    - name: update apt package cache
+      apt: update_cache=yes cache_valid_time=3600
+
+    - name: set the hostname to something useful
+      hostname: name=jessiepi  #{{hostname here}}
+
+    - name: install emacs
+      apt: name=emacs
+
+    - name: add nodesource apt key
+      apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key 
+
+    - name: add nodesource repo
+      apt_repository: repo='deb https://deb.nodesource.com/node_4.x jessie main'
+
+    - name: add nodesource source repo
+      apt_repository: repo='deb-src https://deb.nodesource.com/node_4.x jessie main'
+
+    - name: install node software
+      apt: name=nodejs state=latest
+
+    - name: fix wifi timeout issue
+      copy: 
+        content: 'options 8192cu rtw_power_mgnt=0 rtw_enusbss=1 rtw_ips_mode=1'
+        dest: /etc/modprobe.d/8192cu.conf
+
+    # looks like that did it, not sure why the hotplug isn't working, but something to diagonse further later.
+    #- name: make sure that gpsd is pointing at the right gps device
+    #  lineinfile: 
+    #    dest: /etc/default/gpsd
+    #    backup: yes
+    #    line: 'DEVICES="/dev/ttyUSB0"' #, (if this gets changed, reboot (or atleast restart service)
+    #    regexp: '^DEVICES='
+
+    #- name: upgrade all packages intellegenetly
+    #  apt: upgrade=dist
+
+    #- name: update firmware
+    #  command: rpi-update
+
+
+    #- name: start gpsd
+    #  service: name=gpsd arguments='/dev/ttyUSB0 -S 2948' state=started enabled=yes
+
+
+      #- name: set password for raspberries
+      #  user: name=pi password= # look at http://docs.ansible.com/faq.html#how-do-i-generate-crypted-
+        # passwords-for-the-user-module for more..
+
+      #- name: allow jay to ssh in
+      #  authorized_key: user=pi key=https://github.com/alpharigel.keys
+
+
+     #sudo apt-get install -y python-numpy python-httplib2 python-pyaudio python-scipy python-requests
+
+# setup the webserver
+
+#      - name: install apache
+#        apt: name=apache2
+
+#      - name: install php-apache
+#        apt: name=libapache2-mod-php5
+
+#      - name: install php
+#        apt: name=php5
+
+#      - name: set default permissions
+#        command: cp $CALMEQ_DIR/apache2/default /etc/apache2/sites-available/default
+  
+# sudo apt-get install -y apache2
+# sudo apt-get install php5 libapache2-mod-php5 -y
+# cp $CALMEQ_DIR/apache2/default /etc/apache2/sites-available/default
+# sudo apachectl -k start  # it should be up by default, but just to make sure
+
+# echo ""
+# echo "--- give webserver user approriate permisions ---"
+# sudo cp $CALMEQ_DIR/preinstall/calmeq.sudoers /etc/sudoers.d/calmeq
+# sudo chmod 0440 /etc/sudoers.d/calmeq
+
+# python $CALMEQ_DIR/python/record_and_push.py &
+
+# stream the stuff:
+# arecord -d 10 -D hw:1  -f S16_LE -t raw | python rawaudio2rms.py | lame - out.mp3 -s 16 -m m -r 
