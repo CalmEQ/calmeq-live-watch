@@ -14,10 +14,17 @@ import sys
 import numpy
 from socketIO_client import SocketIO, LoggingNamespace
 
+#host='localhost'
+host='calmeq-live-watch-alpharigel.c9.io'
+#port=1324
+port=8080
+name='jessie.pi'
+
 # hack for stdin
 # remove this once finished downloading
 
-with SocketIO('localhost', 1324, LoggingNamespace) as socketIO:
+with SocketIO(host, port, LoggingNamespace) as socketIO:
+  socketIO.emit( 'add device', name );
   NREAD=60000
   sys.stderr.write( 'starting read data in python\n' )
   raw_audio = sys.stdin.read(NREAD)
@@ -33,6 +40,6 @@ with SocketIO('localhost', 1324, LoggingNamespace) as socketIO:
     #  sys.stdout.write( raw_audio )
     sys.stdout.write( '%g\n' % db )
     sys.stderr.write( 'got %g in python\n' %db )
-    socketIO.emit( 'noiselvl', db )
-  
+    socketIO.emit( 'signal', { 'name': name, 'key': "noiselvl", 'val': db } )
+
     raw_audio = sys.stdin.read(NREAD)
