@@ -18,13 +18,14 @@
       <h2>Connected Devices</h2>
       <div ng-controller="AllDevice">
         <table>
-          <th>Connected</th><th>Name</th><th>Latitude</th><th>Longitude</th><th>Altitude</th>
+          <th>Connected</th><th>Name</th><th>Latitude</th><th>Longitude</th><th>Altitude</th><th>Noise Lvl</th>
           <tr ng-repeat="device in devicedata">
             <td>{{devicedata.connected}}</td>
             <td>{{device.name}}</td>
             <td>{{device.latitude}}</td>
             <td>{{device.longitude}}</td>
             <td>{{device.altitude}}</td>
+            <td>{{device.noiselvl}}</td>
           </tr>
         </table>
         </ul>
